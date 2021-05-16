@@ -13,13 +13,6 @@ import tkcalendar as tkcal
 
 import pandas as pd
 
-import webbrowser
-
-
-
-
-from tempfile import NamedTemporaryFile
-
 import datetime
 
 import mysql.connector 
@@ -239,43 +232,56 @@ class Cadastro:
         self.master.destroy()
 
 class Relatorio:
-    global cliente_rel, periodo
+   
     def __init__(self, master):
         self.master = master
         self.frame = tk.Frame(self.master)
         self.master.attributes('-topmost', True)
         self.label_titulo = tk.Label(self.master)
-        self.label_titulo.configure(text="Solicitar Relatório de Anúncios",width=30,
+        self.label_titulo.configure(text="Solicitar Relatório de Anúncios",width=20,
                                     font=("bold", 20))
         self.label_titulo.grid(column=0, row=0) 
-        self.label_cliente_rel = tk.Label(self.master)
-        self.label_cliente_rel.configure(text="Cliente",width=20,font=("bold", 10))
-        self.label_cliente_rel.grid(column=0, row=1) 
-        self.entra_cliente_rel = tk.Entry(self.master)
-        self.entra_cliente_rel.grid(pady=20,padx=20,column=1, row=1) 
+        self.label_cliente = tk.Label(self.master)
+        self.label_cliente.configure(text="Cliente",width=20,font=("bold", 10))
+        self.label_cliente.grid(column=0, row=1) 
+        self.entra_cliente = tk.Entry(self.master)
+        self.entra_cliente.grid(pady=20,padx=20,column=1, row=1) 
 
-        self.label_titulo.grid(column=0, row=0) 
-        self.label_periodo = tk.Label(self.master)
-        self.label_periodo.configure(text="Dias agendados",width=20,font=("bold", 10))
-        self.label_periodo.grid(column=0, row=2) 
-        self.entra_periodo = tk.Entry(self.master)
-        self.entra_periodo.grid(pady=20,padx=20,column=1, row=2) 
+        self.label_data_ini = tk.Label(self.master)
+        self.label_data_ini.configure(text="Data de início",width=20,font=("bold", 10))
+        self.label_data_ini.grid(column=0, row=2)
+        self.entra_data_ini = tk.Entry(self.master)
+        self.entra_data_ini.grid(pady=20,padx=20,column=1, row=2)
+        self.calendario1 = tkcal.DateEntry(self.entra_data_ini)
+        self.calendario1.configure(width=30,locale='pt_BR',background="blue",foreground="white")
+        self.calendario1.grid()
+
+        self.label_data_fim = tk.Label(self.master)
+        self.label_data_fim.configure(text="Data de término",width=20,font=("bold", 10))
+        self.label_data_fim.grid(column=0, row=3)
+        self.entra_data_fim = tk.Entry(self.master)
+        self.entra_data_fim.grid(pady=20,padx=20,column=1, row=3)
+        self.calendario2 = tkcal.DateEntry(self.entra_data_fim)
+        self.calendario2.configure(width=30,locale='pt_BR',background="blue",foreground="white")
+        self.calendario2.grid()
 
         # Comando para inserção/conferência dos dados digitados
         self.gerar_button = tk.Button(self.master)
         self.gerar_button.configure(text='Gerar Relatório', width=20,font=("bold", 10),
                                      command = self.combineFunc(self.func_01,
-                                                      self.func_02, self.func_check))
+                                                      self.func_02,self.func_03,
+                                                      self.func_check))
                                                       
         self.gerar_button.grid(pady=20,padx=20,column=0, row=6)
         
-        # Comando para sair da tela de relatório
+        # Comando para sair da tela de realtório
         self.sair_cad_button = tk.Button(self.master)
         self.sair_cad_button.configure(text='Sair', width=20,font=("bold", 10),
                                      command = self.close_windows)
                                                       
         self.sair_cad_button.grid(pady=20,padx=20,column=1, row=6)    
 
+####
     def combineFunc(self, *funcs):
          def combinedFunc(*args, **kwargs):
              for f in funcs:
@@ -283,17 +289,25 @@ class Relatorio:
          return combinedFunc
  
     def func_01(self):
-        global cliente_rel
-        cliente_rel = self.entra_cliente_rel.get()
+        global cliente
+        cliente = self.entra_cliente.get()
         
     def func_02(self):
-        global periodo
-        dias = self.entra_periodo.get()
-        periodo = int(dias)
- 
+        global data_ini
+        data = self.calendario1.get()
+        data_ini = capt_data(data)
+        print(data_ini)
+        
+    def func_03(self):
+        global data_fim
+        data = self.calendario2.get()
+        data_fim = capt_data(data)
+        print(data_fim)
+      
     def func_check(self):
-        global cliente_rel, periodo
-        dados = [cliente_rel, periodo]
+        #dados = self.get_dados(self)
+        global nome_anuncio, cliente, data_ini, data_fim, inv_dia
+        dados = [nome_anuncio, cliente, data_ini, data_fim, inv_dia]
         print(dados)
     
         if dados[0] == '':
@@ -302,10 +316,18 @@ class Relatorio:
             return False
         
         if dados[1] == '':
-            dado_ausente = 'Dias Agendados'
+            dado_ausente = 'Data de início'
             self.mensagem_erro(dado_ausente)
             return False        
- 
+    
+        if dados[2] == '':
+            dado_ausente = 'Data de término'
+            self.mensagem_erro(dado_ausente)
+            return False  
+       
+        if dados[2] < dados[1]:
+            self.mensagem_erro_datas(dados[2],dados[3])
+            return False   
 
         # não havendo erros no preenchimento, chama  a função para
         # extrair o relatório da base de dados
@@ -320,13 +342,22 @@ class Relatorio:
         self.msg_erro = tk.messagebox.showinfo('Dados incompletos!',texto,parent=self.master)
                 
         return
-
-    def limpa_dados(self):
-        self.entra_cliente_rel.delete(0, 'end')
-        self.entra_periodo.delete(0,'end')
-       
+    
+    def mensagem_erro_datas(self,data_ini,data_fim):
+        texto = 'A data de término: "' + str(data_fim) + '" é anterior à '
+        texto = texto + 'data de início: "' + str(data_ini) + '.'            
+        self.msg_erro = tk.messagebox.showinfo('Dados incompletos!',texto)    
         
         return
+
+    def limpa_dados(self):
+        self.entra_cliente.delete(0, 'end')
+        self.calendario1.delete(0,'end')
+        self.calendario2.delete(0,'end')
+        
+        return
+
+####
         
     def close_windows(self):
         self.master.destroy()
@@ -380,7 +411,6 @@ def check_db(config):
        n_max_compartilhamentos INT
     )"""
     cursor.execute(query)
-    conector.close()
 
 def anuncio_to_table(config,registro):
     # Conexão com o Banco de Dados Mysql
@@ -405,33 +435,36 @@ def anuncio_to_table(config,registro):
     conector.close()
 
 def relatorio_from_table(config,parametros):
-    print('parametros: ',parametros)
     # Conexão com o Banco de Dados Mysql
     conector = mysql.connector.connect(user=config[0],
                                   password=config[1],
                                   host=config[2],
                                   database=config[3])
   
-    query = "SELECT * FROM " + config[4] + """
-            WHERE cliente = %s 
-            AND inv_total/investimento_diario = %s
-            
-            ORDER BY nome
-            """
-    df = pd.read_sql(sql=query,params=[parametros[0],parametros[1]],
-                         con=conector)
-   
+    cursor = conector.cursor()
+    query = "SELECT * FROM " + config[4] + """ as an
+            WHERE an.cliente = %s
+            ORDER BY an.nome
     
-    df_rel = df[['cliente','nome','inv_total','n_max_visualizacoes',
-                 'n_max_cliks','n_max_compartilhamentos']]
-    rel_browser(df_rel)
-    conector.close()
-    return 
+    """
+    values = (dados[0])
 
-def rel_browser(df):
-    with NamedTemporaryFile(mode ='w',delete=False, suffix='.html') as f:
-        df.to_html(f)
-    webbrowser.open(f.name)    
+
+# O sistema fornecerá os relatórios de cada anúncio contendo:
+# valor total investido
+#quantidade máxima de visualizações
+#quantidade máxima de cliques
+#quantidade máxima de compartilhamentos
+#Os relatórios poderão ser filtrados por intervalo de tempo e cliente.
+
+
+    
+
+    conector.close()
+    df_rel = pd.read_sql(query)
+    print(df_rel)
+    return df_rel
+ 
 
 def armazena_dados(dados):
     global db_config
@@ -461,7 +494,7 @@ def calcula_repercussao(inv_total):
 
 def main():
     global db_config
-    db_config = ['augusto','astra#2018','127.0.0.1','anuncios_db','tab1_anuncios']
+    db_config = ['augusto','astra#2018','127.0.0.1','anuncios_db','table_anuncios']
     check_db(db_config)
     root = tk.Tk()
     app = Principal(root)
@@ -507,11 +540,4 @@ from tkinter import messagebox
 messagebox.askokcancel("Title","The application will be closed")
 messagebox.askyesno("Title","Do you want to save?")
 messagebox.askretrycancel("Title","Installation failed, try again?")
-
-
-    f = open('exp.html','w')
-    a = df.to_html()
-    f.write(a)
-    f.close()
-    print(df_rel)
 """
