@@ -1,0 +1,15 @@
+tkinter
+
+tkinter.messagebox
+
+tkcalendar
+
+pandas
+
+webbrowser
+
+NamedTemporaryFile
+
+datetime
+
+mysql.connector 
