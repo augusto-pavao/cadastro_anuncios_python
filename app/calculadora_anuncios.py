@@ -124,7 +124,6 @@ def main(valor_inv):
     total_vis = 0
     total_cliks = 0
     total_comp = 0
-    #valor_inv = 100
     calcula_reperc(valor_inv)
 
     return [int(total_vis),int(total_cliks),int(total_comp)]
