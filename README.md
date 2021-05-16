@@ -1,22 +1,26 @@
 # cadastro_anuncios_python
-Tarefa de seleção para vaga
+Tarefa de seleção para vaga.
 
 Sistema de Cadastro de Anúncios desenvolvido em Python 3.8
 Módulos utilizados: ver arquivo 'requirements.txt'
 
 1. Montagem do projeto
 
-Este projeto foi desenvolvido com os seguintes pacotes:
-Anacoda Spyder 4.1.5 (Python 3.8)
-Mysql: mysql-installer-community-8.0.24.0
+Este projeto foi desenvolvido com os seguintes pacotes na paltaforma Windows:
+Anacoda Spyder 4.1.5 (Python 3.8), disponível em https://www.anaconda.com/products/individual.
+Mysql: mysql-installer-community-8.0.24.0, disponível em https://dev.mysql.com/downloads/installer/.
 
-a) Instale se necessário os módulos utilizados (ver arquivo requirements.txt) com o comando pip install [módulo]
+a) Instale, se necessário os módulos utilizados, ver arquivo requirements.txt, com o comando:
+
+conda install package-name no 'Anaconda prompt'
+
+detalhes disponíveis em https://docs.anaconda.com/anaconda/user-guide/tasks/install-packages/
 
 b) No diretório de seu projeto copie:
 - os módulos cadastro_anuncios.py e calculadora_anuncios.py
-- o arquivo parametros_reperc.xlxs (ajuste os parâmetros de repercussão)
+- o arquivo parametros_reperc.xlsx (ajuste para os seus parâmetros de repercussão)
 
-2. Módulos do aplicativo
+2. Descrição dos módulos do aplicativo
 
 Este aplicativo é composto de dois módulos:
 	- calculadora_anuncios.py
@@ -24,26 +28,30 @@ Este aplicativo é composto de dois módulos:
 
 2.1 Módulo calculadora_anuncios
 
-Este módulo recebe como entrada (argumento de sistema) o "valor total investido" em um anúncio e retorna as quantidades máximas de:
+Este módulo recebe como entrada, argumento apssado na linha de comando, o "valor total investido" em um anúncio e retorna as quantidades máximas de:
 - visualizações
 - cliques
 - compartilhamentos 
 
-que o anúncio poderá ter, armazenados no arquivo repercussao.txt, asalvo no mesmo diretório do projeto. 
+Os resultados são armazenados no arquivo repercussao.txt, salvo no mesmo diretório do projeto. 
 
-No caso da importação deste módulo por outros módulos  deve ser chamada a função main() tendo como parâmetro o investimento toal, como exemplo:
+No caso da importação deste módulo por outros módulos  deve ser chamada a função main() tendo como parâmetro o investimento total, como neste exemplo:
 
+...
+#importação do módulo calcualdora_anuncios
 import calcuadora_anuncios as calc
 
 ...
-
+# lista que recebe as quantidades calculadas 
 reperc = []
-
+# definição do investimento total
 inv_total = 100
 
+# chamada da função main() com o investimento total
 reperc = calc.main(inv_total)
 
 ...
+
 
 O cálculo da repercussão é feito a partir de dados de análise de anúncios anteriores feito pela agência.
 O arquivo parametros_reperc.xlxs contém esse dados, que podem ser então atualizados/modificados conforme o histórico da agência. 
