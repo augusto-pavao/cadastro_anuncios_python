@@ -1,0 +1,6 @@
+Dados de repercussão do anúncio:
+
+Valor investido:  100.0
+Número máximo de visualizações esperado:  7560
+Número máximo de cliques esperado:  780
+Número máximo de compartilhamentos esperado:  114

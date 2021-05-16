@@ -5,30 +5,37 @@ Created on Wed May  5 10:20:21 2021
 @author: augusto.pavao
 """
 """
-Este módulo recebe como entrada (argumento de sistema) o "valor total investido"
+Este módulo recebe como entrada o "valor total investido"
 em um anúncio e retorna as quantidades máximas de visualizações, de cliques e 
-de comaprtilhamentos que o anúncio poderá ter, armazenados no arquivo 
-repercussaorepercussao.txt. 
+de compartilhamentos que o anúncio poderá ter, armazenados no arquivo 
+repercussao.txt. 
+
 Esse cálculo é feito a partir de dados de análise de anúncios anteriores feito
 pela agência.
-O arquivo parametros_reperc.xlsx contém esse dados, que podem ser então 
+
+O arquivo 'parametros_reperc.xlsx' contém esses dados, que podem ser então 
 atualizados/modificados conforme o histórico da agência.
 
-O valor do investimento de entrada é um passado na execução do módulo se 
-executado individualemnte ou como parâmetro da função mais() se importado
-de outro módulo, neste caso, como exemplo:
+O valor do investimento é passado como parâmetro na linha de comando 
+na execução do módulo, se executado individualmente,
 
+ou como parâmetro da função main() se importado
+de outro módulo, como neste exemplo:
+...
+#importação do módulo calcualdora_anuncios
 import calcuadora_anuncios as calc
 
 ...
-
+# lista que recebe as quantidades calculadas 
 reperc = []
-
+# definição do investimento total
 inv_total = 100
 
+# chamada da função main() com o investimento total
 reperc = calc.main(inv_total)
 
 ...
+
 """
 import sys
 import math
@@ -85,7 +92,6 @@ cota_comp = df_parametros._get_value(0,'cota_comp')
 comp_by_cota = df_parametros._get_value(0,'comp_by_cota')
 conv_comp_by_clicks =  [cota_comp,comp_by_cota] # lista que agrega os dois fatores
 
-
 # cota_new_vis: cota de compartilhamentos que gera novas visualizações
 cota_new_vis = df_parametros._get_value(0,'cota_new_vis')
 # new_vis_by_cota: número de novas visualizações geradas por uma cota de
@@ -96,12 +102,10 @@ conv_new_vis_by_comp =  [cota_new_vis,new_vis_by_cota] # lista que agrega os doi
 # max_comp: número máximo de compartilhamentos 
 max_comp = df_parametros._get_value(0,'max_comp')
 
-
 # Variáveis
 
 Vis_por_comp = []   # lista que armazena as visualizações iniciais em cada
                     # etapa dos compartilhamentos
-
     
 def calcula_reperc(valor_inv):
     # Calcula Vis_por_comp[0]: a quantidade de visualizações iniciais geradas
