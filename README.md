@@ -98,10 +98,16 @@ Ao ser efetuado o cadastro de um anúncio é executado o módulo calculadora_anu
 - quantidade máxima de cliques
 - quantidade máxima de compartilhamentos
 
-que são agregados as dados de cadastro e formam um registro completo do anúncio que é inserido em um banco de dados mysql
+Esses valores são agregados as dados de cadastro e formam um registro completo do anúncio que é inserido em um banco de dados mysql
 
-Podem ser gerados relatórios filtrados por cliente e por período.
-O relatório retorna os campos:
+Podem ser gerados relatórios a partir das seguintes definições (filtros), equivalentes aos campos na respectiva tela de relatório:
+- cliente
+- data inicial de pesquisa
+- data final de pesquisa
+
+O relatório retornará, portanto, todos os anúncios do cliente especificado que foram 'publicados' em intervalos contidos nas datas de pesquisa.
+
+Campos do relatório:
 - cliente
 - nome do anúncio
 - valor total investido
@@ -110,6 +116,5 @@ O relatório retorna os campos:
 - quantidade máxima de compartilhamentos
 
 A visualização do relatório é feita no browser.
-
 
 
